@@ -3,10 +3,16 @@ import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function Home() {
   const { data, isPending } = authClient.useSession();
   const router = useRouter();
+  const shouldRedirectToSignIn = !data?.session && !data?.user;
+
+  useEffect(() => {
+    if (shouldRedirectToSignIn) router.replace("/sign-in");
+  }, [shouldRedirectToSignIn, router]);
 
   if (isPending) {
     return (
@@ -16,9 +22,7 @@ export default function Home() {
     );
   }
 
-  if (!data?.session && !data?.user) {
-    router.push("/sign-in");
-  }
+  if (shouldRedirectToSignIn) return null;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background font-sans">

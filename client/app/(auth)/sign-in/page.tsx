@@ -4,11 +4,18 @@ import { LoginForm } from '@/components/login-form'
 import { Spinner } from '@/components/ui/spinner';
 import { authClient } from '@/lib/auth-client';
 import { useRouter } from 'next/navigation';
-import React from 'react'
+import { useEffect } from "react";
 
 const Page =  () => {
     const {data , isPending , } = authClient.useSession();
   const router = useRouter();
+
+  const shouldRedirectHome = Boolean(data?.session && data?.user);
+
+  useEffect(() => {
+    if (shouldRedirectHome) router.replace("/");
+  }, [shouldRedirectHome, router]);
+
   if(isPending){
     return (
       <div className="flex flex-col items-center justify-center h-screen">
@@ -17,9 +24,8 @@ const Page =  () => {
     )
   }
 
-  if(data?.session && data?.user){
-    router.push("/")
-  }
+  if (shouldRedirectHome) return null;
+
   return (
     <LoginForm />
   )
