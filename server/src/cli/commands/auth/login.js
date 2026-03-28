@@ -40,10 +40,9 @@ export async function storeToken(token) {
     // Ensure config directory exists
     await fs.mkdir(CONFIG_DIR, { recursive: true });
 
-    // Store token with metadata
     const tokenData = {
       access_token: token.access_token,
-      refresh_token: token.refresh_token, // Store if available
+      refresh_token: token.refresh_token, 
       token_type: token.token_type || "Bearer",
       scope: token.scope,
       expires_at: token.expires_in
@@ -65,7 +64,6 @@ export async function clearStoredToken() {
     await fs.unlink(TOKEN_FILE);
     return true;
   } catch (error) {
-    // File doesn't exist or can't be deleted
     return false;
   }
 }
@@ -88,7 +86,7 @@ export async function requireAuth() {
 
   if (!token) {
     console.log(
-      chalk.red("❌ Not authenticated. Please run 'your-cli login' first."),
+      chalk.red("❌ Not authenticated. Please run 'zcode login' first."),
     );
     process.exit(1);
   }
@@ -97,15 +95,12 @@ export async function requireAuth() {
     console.log(
       chalk.yellow("⚠️  Your session has expired. Please login again."),
     );
-    console.log(chalk.gray("   Run: your-cli login\n"));
+    console.log(chalk.gray("   Run: zcode login\n"));
     process.exit(1);
   }
 
   return token;
 }
-
-
-// LOGIN COMMAND
 
 
 export async function loginAction(opts) {
